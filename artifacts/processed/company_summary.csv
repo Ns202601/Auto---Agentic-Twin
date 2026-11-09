@@ -1,0 +1,10 @@
+company,sources,dated_sources,pdf_documents,earliest_year,latest_year,distinct_domains,dated_pct,company_material,listing_confirmed,other,primary,secondary,vendor_or_sponsored
+Tata Motors,20,19,1,2019,2026,13,95.0,3,1,0,3,13,0
+Mahindra,16,12,3,2020,2026,8,75.0,0,0,0,6,10,0
+VECV (Eicher),15,14,2,2020,2026,7,93.3,0,0,0,5,10,0
+Ashok Leyland,15,10,1,2020,2026,9,66.7,0,0,0,1,13,1
+Cummins,16,13,0,2020,2026,12,81.2,0,0,0,4,10,2
+UCI / public research,2,0,0,,,1,0.0,0,2,0,0,0,0
+NASA,3,0,0,,,2,0.0,0,2,1,0,0,0
+India Data Portal (mirror of VAHAN),5,5,0,2019,2019,1,100.0,0,5,0,0,0,0
+arXiv (research paper),1,1,0,2024,2024,1,100.0,0,1,0,0,0,0

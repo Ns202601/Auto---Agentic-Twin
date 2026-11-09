@@ -1,0 +1,15 @@
+group,A,C,D,E,total
+After-treatment,0,0,7,0,7
+After-treatment / Compliance,1,0,0,0,1
+Engine,0,1,3,2,6
+Engine / AT,0,0,1,0,1
+Engine / EV,0,0,1,0,1
+Engine / Fleet,1,0,0,0,1
+Fleet,2,0,4,0,6
+Maintenance,1,1,4,1,7
+Maintenance / Fleet,1,0,0,0,1
+Market (open),0,1,0,0,1
+Vehicle,4,0,4,0,8
+Vehicle / Engine,0,0,1,0,1
+Vehicle / Fleet,0,0,1,0,1
+total,10,3,26,3,42

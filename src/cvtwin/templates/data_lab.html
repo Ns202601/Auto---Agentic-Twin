@@ -1,0 +1,420 @@
+<title>Agentic Twin Data Lab</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a diagnostic readout. Summary strip, then fault list, then evidence tables, then a Python bench. */
+:root {
+  --bg: #eef1f4;          /* cool workshop grey */
+  --panel: #ffffff;
+  --ink: #17212b;         /* deep blue-black */
+  --muted: #5a6876;
+  --rule: #d3d9e0;
+  --accent: #1f5f8b;      /* service-manual blue */
+  --accent-soft: #d6e6f2;
+  --ok: #1d7a4a;  --ok-soft: #dcefe4;
+  --warn: #9a5b00; --warn-soft: #fbe9c8;   /* amber check-engine lamp */
+  --bad: #b3261e;  --bad-soft: #f8dcd9;
+  --code-bg: #1b2530; --code-ink: #e3eaf1;
+  --bar-2: #8ea3b6; --bar-3: #c3ced8;
+  --font-display: "Barlow Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --step--1: 0.8125rem; --step-0: 0.9375rem; --step-1: 1.125rem; --step-2: 1.5rem; --step-3: 2.25rem;
+  --radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171d; --panel: #18212a; --ink: #e4eaf0; --muted: #98a6b4; --rule: #2a3643;
+    --accent: #7db8e3; --accent-soft: #1d3346;
+    --ok: #6fcf97; --ok-soft: #173326; --warn: #f2b453; --warn-soft: #3a2a10; --bad: #f28b82; --bad-soft: #3d1c1a;
+    --code-bg: #0b1015; --code-ink: #dbe4ec; --bar-2: #5d7488; --bar-3: #3b4b5a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171d; --panel: #18212a; --ink: #e4eaf0; --muted: #98a6b4; --rule: #2a3643;
+  --accent: #7db8e3; --accent-soft: #1d3346;
+  --ok: #6fcf97; --ok-soft: #173326; --warn: #f2b453; --warn-soft: #3a2a10; --bad: #f28b82; --bad-soft: #3d1c1a;
+  --code-bg: #0b1015; --code-ink: #dbe4ec; --bar-2: #5d7488; --bar-3: #3b4b5a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: var(--step-0); line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 56px;
+}
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 40px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; margin: 0; letter-spacing: 0.01em; }
+h1 { font-size: var(--step-3); font-weight: 700; line-height: 1.05; }
+h2 { font-size: var(--step-2); font-weight: 600; }
+h3 { font-size: var(--step-1); font-weight: 600; }
+p { margin: 0; max-width: 68ch; }
+.eyebrow { font-family: var(--font-mono); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.muted { color: var(--muted); }
+code, .mono { font-family: var(--font-mono); font-size: 0.92em; }
+a { color: var(--accent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header { display: grid; gap: 10px; }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: var(--step--1); color: var(--muted); }
+
+/* status strip: like a scan-tool summary */
+.strip { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--rule); border-radius: var(--radius); background: var(--panel); }
+.strip > div { padding: 14px 18px; display: grid; gap: 2px; border-left: 1px solid var(--rule); }
+.strip > div:first-child { border-left: 0; }
+.strip .n { font-family: var(--font-display); font-size: var(--step-3); font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.strip .n.ok { color: var(--ok); } .strip .n.warn { color: var(--warn); } .strip .n.bad { color: var(--bad); }
+@media (max-width: 560px) { .strip { grid-template-columns: repeat(2, minmax(0, 1fr)); } .strip > div:nth-child(3) { border-left: 0; } .strip > div:nth-child(n+3) { border-top: 1px solid var(--rule); } }
+
+section { display: grid; gap: 14px; }
+.sec-head { display: grid; gap: 4px; }
+
+/* chips */
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 1px 8px; border-radius: 999px; font-family: var(--font-mono); font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.chip.ok { background: var(--ok-soft); color: var(--ok); }
+.chip.warn { background: var(--warn-soft); color: var(--warn); }
+.chip.bad { background: var(--bad-soft); color: var(--bad); }
+.chip.info { background: var(--accent-soft); color: var(--accent); }
+.tag { font-family: var(--font-mono); font-size: 0.75rem; padding: 1px 6px; border: 1px solid var(--rule); border-radius: 4px; color: var(--muted); white-space: nowrap; }
+
+/* fault list */
+.faults { display: grid; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--panel); }
+.fault { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 4px 16px; padding: 14px 18px; border-top: 1px solid var(--rule); }
+.fault:first-child { border-top: 0; }
+.fault .code { font-family: var(--font-mono); font-weight: 500; color: var(--warn); padding-top: 1px; }
+.fault .code.bad { color: var(--bad); }
+.fault .body { display: grid; gap: 6px; min-width: 0; }
+.fault .title { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.fault .title strong { font-weight: 600; }
+.fault .items { display: flex; flex-wrap: wrap; gap: 6px; }
+.fault .fix { font-size: var(--step--1); color: var(--muted); }
+@media (max-width: 480px) { .fault { grid-template-columns: minmax(0, 1fr); } }
+
+/* tables */
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: var(--step--1); }
+th, td { text-align: left; padding: 8px 12px; border-top: 1px solid var(--rule); vertical-align: top; }
+thead th { border-top: 0; font-family: var(--font-mono); font-weight: 500; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); background: var(--panel); }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+td.mono { white-space: nowrap; }
+tbody tr:hover { background: color-mix(in srgb, var(--accent-soft) 40%, transparent); }
+
+.grid-2 { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .grid-2 { grid-template-columns: minmax(0, 1fr); } }
+
+/* stacked bars */
+.bars { display: grid; gap: 10px; padding: 16px 18px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--panel); }
+.bar-row { display: grid; grid-template-columns: 150px minmax(0, 1fr) 44px; gap: 12px; align-items: center; font-size: var(--step--1); }
+.bar-row .lbl { overflow-wrap: anywhere; }
+.bar-track { display: flex; height: 14px; background: color-mix(in srgb, var(--rule) 45%, transparent); border-radius: 3px; overflow: hidden; }
+.bar-track span { display: block; height: 100%; }
+.seg-primary { background: var(--accent); } .seg-secondary { background: var(--bar-2); } .seg-other { background: var(--bar-3); }
+.bar-row .tot { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: var(--step--1); color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.axis { display: grid; grid-template-columns: 150px minmax(0, 1fr) 44px; gap: 12px; font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.axis .ticks { display: flex; justify-content: space-between; }
+@media (max-width: 480px) { .bar-row, .axis { grid-template-columns: 96px minmax(0, 1fr) 32px; } }
+
+/* availability heat cells */
+td.heat { text-align: center; font-variant-numeric: tabular-nums; font-family: var(--font-mono); }
+.h0 { color: var(--muted); }
+.hA { background: var(--ok-soft); } .hC { background: var(--accent-soft); } .hD { background: var(--warn-soft); } .hE { background: var(--bad-soft); }
+
+details.all { border: 1px solid var(--rule); border-radius: var(--radius); background: var(--panel); }
+details.all > summary { cursor: pointer; padding: 12px 18px; font-weight: 500; }
+details.all[open] > summary { border-bottom: 1px solid var(--rule); }
+details.all .table-wrap { border: 0; border-radius: 0; }
+
+/* python bench */
+.bench { display: grid; gap: 0; border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; background: var(--code-bg); }
+.bench-bar { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; padding: 10px 12px; background: var(--panel); border-bottom: 1px solid var(--rule); }
+.bench-bar .spacer { flex: 1 1 auto; }
+select, button { font: inherit; font-size: var(--step--1); }
+select { padding: 6px 8px; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); color: var(--ink); max-width: 100%; }
+button { padding: 6px 14px; border-radius: 4px; border: 1px solid var(--rule); background: var(--panel); color: var(--ink); cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--panel); font-weight: 600; }
+button:disabled { opacity: 0.55; cursor: progress; }
+.engine { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
+textarea#code {
+  display: block; width: 100%; min-height: 260px; resize: vertical; border: 0; margin: 0;
+  padding: 14px 16px; background: var(--code-bg); color: var(--code-ink);
+  font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; tab-size: 4;
+}
+textarea#code:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.out-head { display: flex; justify-content: space-between; align-items: center; padding: 6px 16px; border-top: 1px solid color-mix(in srgb, var(--code-ink) 18%, transparent); font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: color-mix(in srgb, var(--code-ink) 65%, transparent); }
+.out-head button { padding: 2px 10px; font-size: 0.72rem; background: transparent; color: var(--code-ink); border-color: color-mix(in srgb, var(--code-ink) 30%, transparent); }
+pre#out { margin: 0; padding: 12px 16px 16px; min-height: 120px; max-height: 420px; overflow: auto; color: var(--code-ink); font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+pre#out .err { color: var(--bad); }
+pre#out .sys { color: color-mix(in srgb, var(--code-ink) 60%, transparent); }
+.files { display: flex; flex-wrap: wrap; gap: 6px; }
+
+footer { display: grid; gap: 8px; font-size: var(--step--1); color: var(--muted); border-top: 1px solid var(--rule); padding-top: 18px; }
+pre.cmd { margin: 0; padding: 10px 14px; background: var(--panel); border: 1px solid var(--rule); border-radius: var(--radius); overflow-x: auto; font-family: var(--font-mono); font-size: 0.8rem; color: var(--ink); }
+
+@media (prefers-reduced-motion: no-preference) { tbody tr { transition: background-color 120ms; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Auto · Agentic Twin · repository scan</span>
+    <h1>Agentic Twin Data Lab</h1>
+    <p class="muted">A scan of the commercial-vehicle research data in this repository: what passes, what needs your attention, and what the data covers. Run Python on the same files at the bottom of the page.</p>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="strip" id="strip" aria-label="Check summary"></div>
+
+  <section aria-labelledby="h-faults">
+    <div class="sec-head">
+      <h2 id="h-faults">Needs attention</h2>
+      <p class="muted">Warnings do not block the pipeline. Each one points at a gap in the research that should be closed before you cite it.</p>
+    </div>
+    <div class="faults" id="faults"></div>
+  </section>
+
+  <section aria-labelledby="h-cov">
+    <div class="sec-head">
+      <h2 id="h-cov">What the research covers</h2>
+    </div>
+    <div class="grid-2">
+      <div style="display:grid;gap:10px;min-width:0">
+        <h3>Sources by company and verification</h3>
+        <div class="bars" id="bars"></div>
+        <div class="legend">
+          <span><i class="seg-primary"></i>Primary (company page, filing, press release)</span>
+          <span><i class="seg-secondary"></i>Secondary (trade press)</span>
+          <span><i class="seg-other"></i>Other (listing, vendor, sponsored)</span>
+        </div>
+      </div>
+      <div style="display:grid;gap:10px;min-width:0">
+        <h3>Which data fields are public</h3>
+        <div class="table-wrap"><table id="avail"></table></div>
+        <p class="muted" style="font-size:var(--step--1)">A public as spec or claim · C open dataset · D not public · E needs company permission. No field is code B yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-ds">
+    <div class="sec-head">
+      <h2 id="h-ds">Dataset readiness</h2>
+      <p class="muted">Ready means a verified download link and a licence that needs no further check.</p>
+    </div>
+    <div class="table-wrap"><table id="datasets"></table></div>
+  </section>
+
+  <section aria-labelledby="h-all">
+    <details class="all">
+      <summary id="h-all">All checks, by file</summary>
+      <div class="table-wrap"><table id="allchecks"></table></div>
+    </details>
+  </section>
+
+  <section aria-labelledby="h-py">
+    <div class="sec-head">
+      <h2 id="h-py">Python bench</h2>
+      <p class="muted">Python 3 running in your browser (Brython). The repository's CSV files are preloaded. Use <code>read_csv(name)</code> for a list of rows and <code>show(rows)</code> for a quick table. Press Ctrl+Enter or ⌘+Enter to run.</p>
+      <div class="files" id="files"></div>
+    </div>
+    <div class="bench">
+      <div class="bench-bar">
+        <label for="example" class="muted" style="font-size:var(--step--1)">Example</label>
+        <select id="example"></select>
+        <span class="spacer"></span>
+        <span class="engine" id="engine">Python loads when you press Run (about 6 MB, once)</span>
+        <button class="primary" id="run" type="button">Run</button>
+      </div>
+      <textarea id="code" spellcheck="false" aria-label="Python code"></textarea>
+      <div class="out-head"><span>Output</span><button id="clear" type="button">Clear</button></div>
+      <pre id="out" role="log" aria-live="polite"></pre>
+    </div>
+  </section>
+
+  <footer>
+    <span>Rebuild this page from the repository after any data change:</span>
+    <pre class="cmd">make all &amp;&amp; .venv/bin/python -m cvtwin artifact</pre>
+    <span id="foot-gen"></span>
+  </footer>
+</div>
+
+<script id="lab-data" type="application/json">__LAB_DATA__</script>
+<script>
+(function () {
+  "use strict";
+  const D = JSON.parse(document.getElementById("lab-data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const S = D.report.summary;
+
+  // ---- header meta + strip
+  $("meta").innerHTML = [
+    `Scanned ${esc(D.report.generated_at)}`,
+    `${D.counts.sources} sources · ${D.counts.datasets} datasets · ${D.counts.fields} data fields`,
+    D.report.postgres ? `Schema live-tested on PostgreSQL` : `Schema checked statically`,
+  ].map((t) => `<span>${t}</span>`).join("");
+  $("strip").innerHTML = [
+    ["Checks run", S.checks_run, ""],
+    ["Passed", S.passed, "ok"],
+    ["Errors", S.errors, S.errors ? "bad" : "ok"],
+    ["Warnings", S.warnings, S.warnings ? "warn" : "ok"],
+  ].map(([l, n, c]) => `<div><span class="eyebrow">${l}</span><span class="n ${c}">${n}</span></div>`).join("");
+
+  // ---- fault list (failed error/warn checks)
+  const FIX = {
+    url_not_retrieved: "Find the official page for this source and replace the placeholder link.",
+    date_format: "Use a single date (YYYY, YYYY-MM or YYYY-MM-DD). Put coverage ranges in the information column.",
+    datasets_without_link: "Confirm each dataset page exists and record its direct link, or drop the candidate.",
+    licence_confirmed: "Open each dataset page and copy its licence wording into the inventory.",
+    record_count_known: "Download each dataset once and record its row and column counts.",
+    group_loadable_into_schema: "Give each field one primary group (engine, after_treatment, vehicle, maintenance, fleet, market) so the dictionary loads into core.field_availability.",
+  };
+  const failed = D.report.results.filter((r) => !r.passed && r.severity !== "info");
+  failed.sort((a, b) => (a.severity === "error" ? -1 : 0) - (b.severity === "error" ? -1 : 0));
+  $("faults").innerHTML = failed.length ? failed.map((r, i) => {
+    const bad = r.severity === "error";
+    const items = (r.failed_items || []).slice(0, 12).map((x) => `<span class="tag">${esc(x)}</span>`).join("");
+    return `<div class="fault">
+      <span class="code ${bad ? "bad" : ""}">${bad ? "E" : "W"}-${String(i + 1).padStart(2, "0")}</span>
+      <div class="body">
+        <div class="title"><strong>${esc(r.detail)}</strong><span class="chip ${bad ? "bad" : "warn"}">${esc(r.check)}</span></div>
+        <span class="muted mono" style="font-size:var(--step--1)">${esc(r.target)}</span>
+        ${items ? `<div class="items">${items}</div>` : ""}
+        ${FIX[r.check] ? `<span class="fix">Fix: ${esc(FIX[r.check])}</span>` : ""}
+      </div></div>`;
+  }).join("") : `<div class="fault"><span class="code" style="color:var(--ok)">OK</span><div class="body"><strong>Nothing needs attention.</strong></div></div>`;
+
+  // ---- stacked bars: sources by company
+  const PRIMARY = ["primary"], SECONDARY = ["secondary"];
+  const rows = D.company_summary.map((c) => {
+    const p = PRIMARY.reduce((s, k) => s + (+c[k] || 0), 0);
+    const s2 = SECONDARY.reduce((s, k) => s + (+c[k] || 0), 0);
+    return { name: c.company, total: +c.sources, p, s: s2, o: +c.sources - p - s2 };
+  });
+  const max = Math.max(...rows.map((r) => r.total));
+  const scale = Math.ceil(max / 5) * 5;
+  const pct = (n) => (100 * n / scale).toFixed(2) + "%";
+  const ticks = [0, scale / 4, scale / 2, (3 * scale) / 4, scale].map((t) => `<span>${Math.round(t)}</span>`).join("");
+  $("bars").innerHTML = rows.map((r) => `<div class="bar-row" title="${esc(r.name)}: ${r.p} primary, ${r.s} secondary, ${r.o} other">
+      <span class="lbl">${esc(r.name)}</span>
+      <span class="bar-track" role="img" aria-label="${esc(r.name)}: ${r.total} sources">
+        <span class="seg-primary" style="width:${pct(r.p)}"></span><span class="seg-secondary" style="width:${pct(r.s)}"></span><span class="seg-other" style="width:${pct(r.o)}"></span>
+      </span>
+      <span class="tot">${r.total}</span></div>`).join("") +
+    `<div class="axis" aria-hidden="true"><span></span><span class="ticks">${ticks}</span><span></span></div>`;
+
+  // ---- availability matrix
+  const codes = ["A", "C", "D", "E"].filter((c) => D.availability.some((r) => c in r));
+  $("avail").innerHTML = `<thead><tr><th>Field group</th>${codes.map((c) => `<th class="num">${c}</th>`).join("")}<th class="num">Total</th></tr></thead><tbody>` +
+    D.availability.map((r) => {
+      const isTotal = r.group === "total";
+      return `<tr${isTotal ? ' style="font-weight:600"' : ""}><td>${esc(isTotal ? "All fields" : r.group)}</td>` +
+        codes.map((c) => { const n = +r[c] || 0; return `<td class="heat ${n && !isTotal ? "h" + c : n ? "" : "h0"}">${n || "·"}</td>`; }).join("") +
+        `<td class="num">${esc(r.total)}</td></tr>`;
+    }).join("") + `</tbody>`;
+
+  // ---- dataset readiness
+  const yes = (v) => v === true || v === "True";
+  $("datasets").innerHTML = `<thead><tr><th>ID</th><th>Dataset</th><th>Source</th><th>Kind</th><th>Status</th></tr></thead><tbody>` +
+    D.datasets.map((d) => {
+      let chip;
+      if (yes(d.ready_to_use)) chip = `<span class="chip ok">Ready</span>`;
+      else if (!yes(d.has_verified_link)) chip = `<span class="chip bad">No verified link</span>`;
+      else chip = `<span class="chip warn">Check licence</span>`;
+      const kind = d.is_synthetic === "True" ? "Simulated or synthetic" : d.is_synthetic === "False" ? "Real-world" : "Unknown";
+      const name = yes(d.has_verified_link) ? `<a href="${esc(d.access_link)}" target="_blank" rel="noopener">${esc(d.dataset_name)}</a>` : esc(d.dataset_name);
+      return `<tr><td class="mono">${esc(d.dataset_id)}</td><td>${name}</td><td>${esc(d.source_org)}</td><td>${kind}</td><td>${chip}</td></tr>`;
+    }).join("") + `</tbody>`;
+
+  // ---- all checks table
+  const chipFor = (r) => r.passed ? (r.severity === "info" ? `<span class="chip info">info</span>` : `<span class="chip ok">pass</span>`)
+    : `<span class="chip ${r.severity === "error" ? "bad" : "warn"}">${r.severity === "error" ? "fail" : "warn"}</span>`;
+  $("allchecks").innerHTML = `<thead><tr><th>Result</th><th>Check</th><th>File</th><th>Detail</th></tr></thead><tbody>` +
+    D.report.results.map((r) => `<tr><td>${chipFor(r)}</td><td class="mono">${esc(r.check)}</td><td class="mono">${esc(r.target.replace(/^research\//, ""))}</td><td>${esc(r.detail)}</td></tr>`).join("") + `</tbody>`;
+  $("foot-gen").textContent = `Page data generated ${D.report.generated_at} by cvtwin ${D.version}.`;
+
+  // ---- Python bench
+  $("files").innerHTML = Object.keys(D.files).map((f) => `<span class="tag">${esc(f)}</span>`).join("");
+  const sel = $("example"), code = $("code"), out = $("out"), runBtn = $("run"), engine = $("engine");
+  D.examples.forEach((ex, i) => { const o = document.createElement("option"); o.value = i; o.textContent = ex.title; sel.appendChild(o); });
+  code.value = D.examples[0].code;
+  sel.addEventListener("change", () => { code.value = D.examples[+sel.value].code; });
+
+  function write(text, cls) {
+    const span = document.createElement("span");
+    if (cls) span.className = cls;
+    span.textContent = text;
+    out.appendChild(span);
+    out.scrollTop = out.scrollHeight;
+  }
+  let errBuf = false;
+  window.labWrite = (s) => write(s, errBuf ? "err" : "");
+  window.labErr = (on) => { errBuf = !!on; };
+  window.labFile = (name) => D.files[name] ?? null;
+  window.labFiles = () => Object.keys(D.files).join("\n");
+
+  code.addEventListener("keydown", (e) => {
+    if (e.key === "Tab" && !e.shiftKey) {
+      e.preventDefault();
+      const s = code.selectionStart, t = code.selectionEnd;
+      code.value = code.value.slice(0, s) + "    " + code.value.slice(t);
+      code.selectionStart = code.selectionEnd = s + 4;
+    } else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault(); run();
+    }
+  });
+  $("clear").addEventListener("click", () => { out.textContent = ""; });
+
+  const BASE = "https://cdn.jsdelivr.net/npm/brython@__BRYTHON_VERSION__/";
+  let ready = null;
+  function load(src) {
+    return new Promise((res, rej) => {
+      const s = document.createElement("script");
+      s.src = src; s.onload = res; s.onerror = () => rej(new Error("Could not load " + src));
+      document.head.appendChild(s);
+    });
+  }
+  function withTimeout(p, ms) {
+    return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("Python took too long to load. Check your connection and press Run again.")), ms))]);
+  }
+  function startEngine() {
+    if (ready) return ready;
+    engine.textContent = "Loading Python…";
+    ready = withTimeout((async () => {
+      await load(BASE + "brython.min.js");
+      await load(BASE + "brython_stdlib.js");
+      window.brython({ debug: 1 });
+      window.__BRYTHON__.runPythonSource(D.prelude, {});
+      engine.textContent = "Python " + (window.__BRYTHON__.implementation || []).slice(0, 3).join(".") + " ready";
+    })(), 60000).catch((e) => {
+      ready = null;
+      const msg = /eval|unsafe|Content Security/i.test(String(e && e.message)) ?
+        "This viewer blocks the in-browser Python engine. Run the same code locally with .venv/bin/python." : String(e && e.message || e);
+      engine.textContent = "Python not available";
+      throw new Error(msg);
+    });
+    return ready;
+  }
+  async function run() {
+    runBtn.disabled = true;
+    try {
+      await startEngine();
+      write(`>>> run ${new Date().toLocaleTimeString()}\n`, "sys");
+      try { window.__BRYTHON__.runPythonSource(code.value, {}); }
+      catch (e) { /* traceback was already written to stderr by the prelude */ if (!out.lastChild || !out.lastChild.className.includes("err")) write(String(e && e.message || e) + "\n", "err"); }
+      write("\n", "sys");
+    } catch (e) {
+      write(e.message + "\n", "err");
+    } finally {
+      runBtn.disabled = false;
+    }
+  }
+  runBtn.addEventListener("click", run);
+})();
+</script>

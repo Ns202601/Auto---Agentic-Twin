@@ -1,0 +1,579 @@
+{
+  "generated_at": "2026-11-09 14:28 UTC",
+  "summary": {
+    "checks_run": 60,
+    "passed": 54,
+    "errors": 0,
+    "warnings": 6
+  },
+  "postgres": "/tmp:5544/postgres",
+  "results": [
+    {
+      "check": "file_exists",
+      "target": "research/sources_directory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "93 data rows",
+      "failed_items": []
+    },
+    {
+      "check": "expected_columns",
+      "target": "research/sources_directory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "all expected columns present",
+      "failed_items": []
+    },
+    {
+      "check": "consistent_column_count",
+      "target": "research/sources_directory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "all rows have 10 columns",
+      "failed_items": []
+    },
+    {
+      "check": "no_blank_rows",
+      "target": "research/sources_directory.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 blank rows",
+      "failed_items": []
+    },
+    {
+      "check": "unique_key:id",
+      "target": "research/sources_directory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 duplicate, 0 empty keys",
+      "failed_items": []
+    },
+    {
+      "check": "no_padded_cells",
+      "target": "research/sources_directory.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 cells with leading/trailing spaces",
+      "failed_items": []
+    },
+    {
+      "check": "file_exists",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "11 data rows",
+      "failed_items": []
+    },
+    {
+      "check": "expected_columns",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "all expected columns present",
+      "failed_items": []
+    },
+    {
+      "check": "consistent_column_count",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "all rows have 13 columns",
+      "failed_items": []
+    },
+    {
+      "check": "no_blank_rows",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 blank rows",
+      "failed_items": []
+    },
+    {
+      "check": "unique_key:dataset_id",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 duplicate, 0 empty keys",
+      "failed_items": []
+    },
+    {
+      "check": "no_padded_cells",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 cells with leading/trailing spaces",
+      "failed_items": []
+    },
+    {
+      "check": "file_exists",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "42 data rows",
+      "failed_items": []
+    },
+    {
+      "check": "expected_columns",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "all expected columns present",
+      "failed_items": []
+    },
+    {
+      "check": "consistent_column_count",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "all rows have 9 columns",
+      "failed_items": []
+    },
+    {
+      "check": "no_blank_rows",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 blank rows",
+      "failed_items": []
+    },
+    {
+      "check": "unique_key:field",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 duplicate, 0 empty keys",
+      "failed_items": []
+    },
+    {
+      "check": "no_padded_cells",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 cells with leading/trailing spaces",
+      "failed_items": []
+    },
+    {
+      "check": "url_format",
+      "target": "research/sources_directory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 malformed URLs",
+      "failed_items": []
+    },
+    {
+      "check": "url_not_retrieved",
+      "target": "research/sources_directory.csv",
+      "severity": "warn",
+      "passed": false,
+      "detail": "1 sources without a retrieved link",
+      "failed_items": [
+        "DS-05"
+      ]
+    },
+    {
+      "check": "duplicate_urls",
+      "target": "research/sources_directory.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 URLs listed more than once",
+      "failed_items": []
+    },
+    {
+      "check": "date_format",
+      "target": "research/sources_directory.csv",
+      "severity": "warn",
+      "passed": false,
+      "detail": "1 dates in an unrecognised shape",
+      "failed_items": [
+        "DS-06: '2019–2024 coverage (per listing)'"
+      ]
+    },
+    {
+      "check": "dated_sources",
+      "target": "research/sources_directory.csv",
+      "severity": "info",
+      "passed": true,
+      "detail": "74 of 93 sources have a date; 19 are n/d",
+      "failed_items": [
+        "TM-17",
+        "MH-11",
+        "MH-12",
+        "MH-13",
+        "MH-14",
+        "VE-15",
+        "AL-02",
+        "AL-03",
+        "AL-04",
+        "AL-14",
+        "AL-15",
+        "CU-07",
+        "CU-14",
+        "CU-16",
+        "DS-01",
+        "DS-02",
+        "DS-03",
+        "DS-04",
+        "DS-05"
+      ]
+    },
+    {
+      "check": "id_prefix_matches_company",
+      "target": "research/sources_directory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 mismatches",
+      "failed_items": []
+    },
+    {
+      "check": "verification_status_present",
+      "target": "research/sources_directory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 rows without verification status",
+      "failed_items": []
+    },
+    {
+      "check": "sources_per_company",
+      "target": "research/sources_directory.csv",
+      "severity": "info",
+      "passed": true,
+      "detail": "Tata Motors: 20, Mahindra: 16, VECV (Eicher): 15, Ashok Leyland: 15, Cummins: 16, UCI / public research: 2, NASA: 3, India Data Portal (mirror of VAHAN): 5, arXiv (research paper): 1",
+      "failed_items": []
+    },
+    {
+      "check": "dataset_id_format",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 ids not shaped DS-NN",
+      "failed_items": []
+    },
+    {
+      "check": "access_link_format",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 malformed links",
+      "failed_items": []
+    },
+    {
+      "check": "datasets_without_link",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "warn",
+      "passed": false,
+      "detail": "3 datasets have no verified link",
+      "failed_items": [
+        "DS-04",
+        "DS-10",
+        "DS-11"
+      ]
+    },
+    {
+      "check": "licence_confirmed",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "warn",
+      "passed": false,
+      "detail": "9 datasets need licence confirmation",
+      "failed_items": [
+        "DS-02",
+        "DS-03",
+        "DS-04",
+        "DS-05",
+        "DS-07",
+        "DS-08",
+        "DS-09",
+        "DS-10",
+        "DS-11"
+      ]
+    },
+    {
+      "check": "record_count_known",
+      "target": "research/data/dataset_inventory.csv",
+      "severity": "warn",
+      "passed": false,
+      "detail": "8 datasets with unconfirmed record counts",
+      "failed_items": [
+        "DS-03",
+        "DS-04",
+        "DS-05",
+        "DS-06",
+        "DS-07",
+        "DS-08",
+        "DS-10",
+        "DS-11"
+      ]
+    },
+    {
+      "check": "availability_code_valid",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 invalid codes",
+      "failed_items": []
+    },
+    {
+      "check": "code_matches_meaning",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 rows where code and meaning disagree",
+      "failed_items": []
+    },
+    {
+      "check": "field_name_snake_case",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "warn",
+      "passed": true,
+      "detail": "0 field names not snake_case",
+      "failed_items": []
+    },
+    {
+      "check": "group_loadable_into_schema",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "warn",
+      "passed": false,
+      "detail": "7 group values do not match the schema's field_group list ['after_treatment', 'engine', 'fleet', 'maintenance', 'market', 'vehicle']",
+      "failed_items": [
+        "After-treatment / Compliance",
+        "Engine / AT",
+        "Engine / EV",
+        "Engine / Fleet",
+        "Maintenance / Fleet",
+        "Vehicle / Engine",
+        "Vehicle / Fleet"
+      ]
+    },
+    {
+      "check": "availability_distribution",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "info",
+      "passed": true,
+      "detail": "A: 10, C: 3, D: 26, E: 3",
+      "failed_items": []
+    },
+    {
+      "check": "dataset_refs_resolve",
+      "target": "research/data/data_dictionary.csv",
+      "severity": "error",
+      "passed": true,
+      "detail": "5 DS refs, 0 unknown",
+      "failed_items": []
+    },
+    {
+      "check": "dataset_refs_resolve",
+      "target": "research/data/etl_and_data_quality_plan.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "4 DS refs, 0 unknown",
+      "failed_items": []
+    },
+    {
+      "check": "dataset_refs_resolve",
+      "target": "research/projects_and_roadmap.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "6 DS refs, 0 unknown",
+      "failed_items": []
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/README.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/companies/01_tata_motors.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "53 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "links_in_source_directory",
+      "target": "research/companies/01_tata_motors.md",
+      "severity": "info",
+      "passed": true,
+      "detail": "18 of 38 unique links are not in sources_directory.csv",
+      "failed_items": [
+        "https://autocarpro.in/news-national/tata-motors-launches-5w30-synthetic-engine-oil-for-cvs-102841",
+        "https://fleet.ie/cummins-produces-hydrogen-internal-combustion-engines-for-tata-motors-at-new-manufacturing-facility/",
+        "https://scanx.trade/stock-market-news/companies/tata-motors-files-integrated-annual-report-for-fy26-reports-highest-ever-revenue-of-83-855-crore/42311189",
+        "https://vision-mobility.de/en/news/tata-motors-takes-over-iveco-group-385538.html",
+        "https://www.91trucks.com/news/why-tata-fleet-edge-beats-traditional-fleet-management-systems",
+        "... and 13 more"
+      ]
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/companies/02_mahindra.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "32 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "links_in_source_directory",
+      "target": "research/companies/02_mahindra.md",
+      "severity": "info",
+      "passed": true,
+      "detail": "9 of 25 unique links are not in sources_directory.csv",
+      "failed_items": [
+        "https://equipmentindia.com/construction-equipment-updates/backhoe-loader/Localisation-remains-central-to-our-product-development-for-India/130302",
+        "https://equipmentindia.com/construction-equipment-updates/product-updates/Mahindra-Unveils-BLAZO-i-TRK-With-10-Better-Mileage/130802",
+        "https://www.autocarpro.in/news-national/mahindra-blazo-x-range-gets-bs-vi-certification-from-cirt-45351?amp=1",
+        "https://www.autocarpro.in/news/no-final-call-yet-on-how-sml-mahindra-will-bankroll-its-next-phase-133792",
+        "https://www.autocarpro.in/news/sml-mahindra-to-acquire-mahindra-truck-bus-division-133779",
+        "... and 4 more"
+      ]
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/companies/03_vecv_eicher.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "31 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "links_in_source_directory",
+      "target": "research/companies/03_vecv_eicher.md",
+      "severity": "info",
+      "passed": true,
+      "detail": "11 of 26 unique links are not in sources_directory.csv",
+      "failed_items": [
+        "https://motownindia.com/Bureau/Auto-Industry/1888/VECV-to-export-Euro-6-engine-base-from-Pithampur",
+        "https://wagenclub.com/2025/01/eicher-pro-x-electric-mini-trucks-scv-range-launched-price-details.html",
+        "https://www.autocarpro.in/feature/vecv-revs-up-to-drive-home-its-firstmover-advantage-in-bs-vi-era-55734?amp=1",
+        "https://www.autocarpro.in/news-national/ve-commercial-vehicles-introduces-highonconnectivity-cvs-in-india-56846",
+        "https://www.autocarpro.in/news-national/vecv%E2%80%99s-new-bhopal-truck-plant-commences-production-77914",
+        "... and 6 more"
+      ]
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/companies/04_ashok_leyland.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "24 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "links_in_source_directory",
+      "target": "research/companies/04_ashok_leyland.md",
+      "severity": "info",
+      "passed": true,
+      "detail": "8 of 23 unique links are not in sources_directory.csv",
+      "failed_items": [
+        "https://aftermarketinsight.spglobal.com/news/607/swedish-aftermarket-saas-company-syncron-partners-with-indian-cv-maker-ashok-leyland-",
+        "https://www.91trucks.com/news/ashok-leyland-powers-ahead-in-ev-market-as-switch-mobility-hits-profit",
+        "https://www.angelone.in/news/stocks/ashok-leyland-s-switch-mobility-delivers-100-electric-buses-to-mauritius",
+        "https://www.autocarpro.in/news-international/ashok-leyland-aidrivers-to-work-on-aienabled-autonomous-vehicles-80857",
+        "https://www.autocarpro.in/news/ashok-leyland-expects-switch-india-to-report-net-profit-3x-bus-volume-growth-in-fy26-125608?amp=1",
+        "... and 3 more"
+      ]
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/companies/05_cummins.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "27 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "links_in_source_directory",
+      "target": "research/companies/05_cummins.md",
+      "severity": "info",
+      "passed": true,
+      "detail": "3 of 20 unique links are not in sources_directory.csv",
+      "failed_items": [
+        "https://fleet.ie/cummins-produces-hydrogen-internal-combustion-engines-for-tata-motors-at-new-manufacturing-facility/",
+        "https://www.autocarpro.in/news-national/cummins-india-gets-bs-vi-compliance-certification-from-arai-44101",
+        "https://www.csr-company.com/node/3760"
+      ]
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/comparison_five_companies.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "links_in_source_directory",
+      "target": "research/comparison_five_companies.md",
+      "severity": "info",
+      "passed": true,
+      "detail": "0 of 0 unique links are not in sources_directory.csv",
+      "failed_items": []
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/data/etl_and_data_quality_plan.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/missing_data_requiring_permission.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "markdown_links_wellformed",
+      "target": "research/projects_and_roadmap.md",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 links; 0 non-http link targets",
+      "failed_items": []
+    },
+    {
+      "check": "schema_objects",
+      "target": "research/data/schema_postgres.sql",
+      "severity": "info",
+      "passed": true,
+      "detail": "16 tables, 2 views",
+      "failed_items": []
+    },
+    {
+      "check": "no_duplicate_tables",
+      "target": "research/data/schema_postgres.sql",
+      "severity": "error",
+      "passed": true,
+      "detail": "0 duplicates",
+      "failed_items": []
+    },
+    {
+      "check": "balanced_parentheses",
+      "target": "research/data/schema_postgres.sql",
+      "severity": "error",
+      "passed": true,
+      "detail": "( = 97, ) = 97",
+      "failed_items": []
+    },
+    {
+      "check": "foreign_keys_resolve",
+      "target": "research/data/schema_postgres.sql",
+      "severity": "error",
+      "passed": true,
+      "detail": "6 referenced tables, 0 undefined",
+      "failed_items": []
+    },
+    {
+      "check": "schema_loads_in_postgres",
+      "target": "research/data/schema_postgres.sql",
+      "severity": "error",
+      "passed": true,
+      "detail": "schema created and rolled back cleanly",
+      "failed_items": []
+    }
+  ]
+}
