@@ -270,3 +270,18 @@ def test_postgres_backend_end_to_end(tmp_path):
         assert any(r["id"] == run["id"] and r["status"] == "completed" for r in s2.list_runs())
     finally:
         s2.close()
+
+
+def test_demo_seed_fills_empty_store_once(tmp_path):
+    settings = Settings(llm_provider="offline", data_dir=tmp_path / "v", projects_dir=tmp_path / "p", seed_demo=True)
+    s = OrchestratorService(settings)
+    try:
+        statuses = sorted(r["status"] for r in s.list_runs())
+        assert statuses == ["awaiting_review", "awaiting_review", "completed"]
+    finally:
+        s.close()
+    s = OrchestratorService(settings)  # second start must not duplicate
+    try:
+        assert len(s.list_runs()) == 3
+    finally:
+        s.close()

@@ -29,6 +29,8 @@ class Settings:
     # Run graphs inside the request instead of a background thread (needed on serverless hosts)
     sync_runs: bool = field(default_factory=lambda: os.getenv("TWIN_SYNC_RUNS", "") in ("1", "true", "yes")
                             or bool(os.getenv("VERCEL")))
+    # Seed demo ideas into an empty store (default: on Vercel when no DATABASE_URL is set)
+    seed_demo: bool = field(default_factory=lambda: os.getenv("TWIN_SEED_DEMO", "1" if (os.getenv("VERCEL") and not os.getenv("DATABASE_URL")) else "") in ("1", "true", "yes"))
     data_dir: Path | None = None
     projects_dir: Path | None = None
 

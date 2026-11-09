@@ -59,6 +59,9 @@ class OrchestratorService:
         )
         self._workers = ThreadPoolExecutor(max_workers=workers, thread_name_prefix="twin-run")
         self._locks: dict[str, threading.Lock] = {}
+        if self.settings.seed_demo:
+            from twinorch.demo import seed_demo
+            seed_demo(self)
 
     # -- use-cases -----------------------------------------------------------
     def submit_idea(self, idea: IdeaIn, wait: bool = False) -> dict:
