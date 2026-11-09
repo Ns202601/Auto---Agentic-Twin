@@ -98,3 +98,17 @@ Outer layers call inner ones, never the reverse. The domain layer has no I/O.
 ## Tests
 
 `tests/test_orchestrator.py` covers every route through the graph, plus: the revision limit, restart recovery, scaffolds for all four kinds, the HTTP API, and the Claude adapter's request shape and refusal and truncation handling (against a fake client, so no API key or spend).
+
+## Deploy: Vercel + Supabase
+
+- **Database:** Supabase Postgres, private `twin` schema (ideas, runs, events, projects, project_files, plus LangGraph checkpoint tables). Not exposed through Supabase's REST API. Set `DATABASE_URL` to use it; without it the app falls back to local SQLite.
+- **Vercel:** `vercel.json` builds the UI (`ui/dist`) as static files and runs the API as one Python function (`api/index.py`, up to 300 s). On Vercel, runs execute inside the request (`TWIN_SYNC_RUNS` is automatic), and generated project files are stored in the database, because function disks don't persist.
+
+Vercel environment variables:
+
+| Name | Value |
+|---|---|
+| `DATABASE_URL` | Supabase → Connect → **Transaction pooler** URI (port 6543), with your database password |
+| `ANTHROPIC_API_KEY` | Optional. Without it the planner uses offline rules |
+
+Local Postgres test: `TWIN_TEST_DATABASE_URL=postgresql://... make test`.

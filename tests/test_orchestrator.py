@@ -242,3 +242,31 @@ def test_api_end_to_end(svc, tmp_path):
         assert client.get(f"/api/runs/{run_id}").json()["status"] == "awaiting_review"
         assert client.post(f"/api/runs/{run_id}/review", json={"action": "maybe"}).status_code == 422
         assert client.get("/api/runs/nope").status_code == 404
+
+
+# -- Postgres (Supabase) backend: runs only when TWIN_TEST_DATABASE_URL is set --
+import os
+
+
+@pytest.mark.skipif(not os.getenv("TWIN_TEST_DATABASE_URL"), reason="set TWIN_TEST_DATABASE_URL to test Postgres")
+def test_postgres_backend_end_to_end(tmp_path):
+    settings = Settings(llm_provider="offline", database_url=os.environ["TWIN_TEST_DATABASE_URL"],
+                        sync_runs=True, projects_dir=tmp_path / "p", data_dir=tmp_path / "v")
+    s = OrchestratorService(settings)
+    try:
+        run = s.submit_idea(IDEAS["ml"])
+        assert run["status"] == "awaiting_review", run.get("error")
+        run = s.review(run["id"], ReviewDecision(action="revise", comment="add drift monitor"))
+        assert run["revision"] == 2
+        run = s.review(run["id"], ReviewDecision(action="approve"))
+        assert run["status"] == "completed"
+        slug = run["state"]["project"]["slug"]
+        assert "README.md" in s.project_files(slug)["files"]
+        assert "DPF" in s.read_file(slug, "README.md")
+    finally:
+        s.close()
+    s2 = OrchestratorService(settings)  # fresh process: data must come back from Postgres
+    try:
+        assert any(r["id"] == run["id"] and r["status"] == "completed" for r in s2.list_runs())
+    finally:
+        s2.close()

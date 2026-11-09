@@ -19,14 +19,16 @@ def create_app(service: OrchestratorService | None = None, ui_dist: Path | None 
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        holder["svc"] = service or OrchestratorService()
         yield
-        if service is None:
+        if service is None and "svc" in holder:
             holder["svc"].close()
 
     app = FastAPI(title="Agentic Twin Orchestrator", version=__version__, lifespan=lifespan)
 
     def svc() -> OrchestratorService:
+        # created lazily: serverless platforms may not run the lifespan hook
+        if "svc" not in holder:
+            holder["svc"] = service or OrchestratorService()
         return holder["svc"]
 
     @app.get("/api/health")

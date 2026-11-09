@@ -1,0 +1,6 @@
+.venv
+var
+projects
+artifacts
+ui/node_modules
+tests

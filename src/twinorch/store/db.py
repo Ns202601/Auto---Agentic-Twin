@@ -50,6 +50,12 @@ CREATE TABLE IF NOT EXISTS projects (
     file_count INTEGER NOT NULL,
     created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS project_files (
+    slug TEXT NOT NULL REFERENCES projects(slug) ON DELETE CASCADE,
+    path TEXT NOT NULL,
+    content TEXT NOT NULL,
+    PRIMARY KEY (slug, path)
+);
 """
 
 
@@ -128,3 +134,18 @@ class Store:
         with self._conn() as c:
             row = c.execute("SELECT * FROM projects WHERE slug = ?", (slug,)).fetchone()
             return dict(row) if row else None
+
+    # -- project files (kept in the database so serverless hosts can serve them) --
+    def add_files(self, slug: str, files: dict[str, str]) -> None:
+        with self._conn() as c:
+            c.executemany("INSERT OR REPLACE INTO project_files VALUES (?,?,?)",
+                          [(slug, p, body) for p, body in files.items()])
+
+    def list_files(self, slug: str) -> list[str]:
+        with self._conn() as c:
+            return [r[0] for r in c.execute("SELECT path FROM project_files WHERE slug = ? ORDER BY path", (slug,))]
+
+    def read_file(self, slug: str, path: str) -> str | None:
+        with self._conn() as c:
+            row = c.execute("SELECT content FROM project_files WHERE slug = ? AND path = ?", (slug, path)).fetchone()
+            return row[0] if row else None

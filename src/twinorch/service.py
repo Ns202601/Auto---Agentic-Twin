@@ -39,15 +39,25 @@ class OrchestratorService:
     def __init__(self, settings: Settings | None = None, llm: LLM | None = None, workers: int = 4):
         self.settings = settings or Settings()
         self.llm = llm or make_llm(self.settings)
-        self.store = Store(self.settings.db_path)
-        self._ckpt_conn = sqlite3.connect(self.settings.checkpoint_path, check_same_thread=False)
-        self.checkpointer = SqliteSaver(self._ckpt_conn)
+        self._pool = None
+        self._ckpt_conn = None
+        if self.settings.database_url:
+            from langgraph.checkpoint.postgres import PostgresSaver
+            from twinorch.store.pg import PgStore, make_pool
+            self._pool = make_pool(self.settings.database_url)
+            self.store = PgStore(self._pool)
+            self.checkpointer = PostgresSaver(self._pool)
+            self.checkpointer.setup()
+        else:
+            self.store = Store(self.settings.db_path)
+            self._ckpt_conn = sqlite3.connect(self.settings.checkpoint_path, check_same_thread=False)
+            self.checkpointer = SqliteSaver(self._ckpt_conn)
         self.graph = build_graph(
             Deps(llm=self.llm, repo_root=self.settings.repo_root,
                  projects_dir=self.settings.output_dir, max_revisions=self.settings.max_revisions),
             checkpointer=self.checkpointer,
         )
-        self._pool = ThreadPoolExecutor(max_workers=workers, thread_name_prefix="twin-run")
+        self._workers = ThreadPoolExecutor(max_workers=workers, thread_name_prefix="twin-run")
         self._locks: dict[str, threading.Lock] = {}
 
     # -- use-cases -----------------------------------------------------------
@@ -71,7 +81,10 @@ class OrchestratorService:
 
     # -- execution -----------------------------------------------------------
     def _dispatch(self, run_id: str, payload, wait: bool) -> None:
-        future = self._pool.submit(self._execute, run_id, payload)
+        if wait or self.settings.sync_runs:
+            self._execute(run_id, payload)
+            return
+        future = self._workers.submit(self._execute, run_id, payload)
         if wait:
             future.result()
 
@@ -119,6 +132,8 @@ class OrchestratorService:
             p = update["project"]
             run = self.store.get_run(run_id)
             self.store.add_project(p["slug"], run_id, run["title"], run["kind"] or "", p["path"], len(p["files"]))
+            root = Path(p["path"])
+            self.store.add_files(p["slug"], {f: (root / f).read_text(encoding="utf-8") for f in p["files"]})
 
     def _fail(self, run_id: str, message: str) -> None:
         self.store.update_run(run_id, status=RunStatus.failed.value, error=message)
@@ -146,19 +161,16 @@ class OrchestratorService:
         project = self.store.get_project(slug)
         if not project:
             raise NotFound(slug)
-        root = Path(project["path"])
-        files = sorted(str(p.relative_to(root)) for p in root.rglob("*") if p.is_file()) if root.exists() else []
-        return {**project, "files": files}
+        return {**project, "files": self.store.list_files(slug)}
 
     def read_file(self, slug: str, rel: str) -> str:
         project = self.store.get_project(slug)
         if not project:
             raise NotFound(slug)
-        root = Path(project["path"]).resolve()
-        path = (root / rel).resolve()
-        if root not in path.parents or not path.is_file():
+        content = self.store.read_file(slug, rel)
+        if content is None:
             raise NotFound(rel)
-        return path.read_text(encoding="utf-8", errors="replace")[:200_000]
+        return content[:200_000]
 
     def meta(self) -> dict:
         g = self.graph.get_graph()
@@ -172,5 +184,8 @@ class OrchestratorService:
         }
 
     def close(self) -> None:
-        self._pool.shutdown(wait=True)
-        self._ckpt_conn.close()
+        self._workers.shutdown(wait=True)
+        if self._ckpt_conn:
+            self._ckpt_conn.close()
+        if self._pool:
+            self._pool.close()

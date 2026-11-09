@@ -24,12 +24,17 @@ class Settings:
     classify_effort: str = field(default_factory=lambda: os.getenv("TWIN_CLASSIFY_EFFORT", "low"))
     plan_effort: str = field(default_factory=lambda: os.getenv("TWIN_PLAN_EFFORT", "high"))
     max_revisions: int = field(default_factory=lambda: int(os.getenv("TWIN_MAX_REVISIONS", "5")))
+    # Postgres (e.g. Supabase) connection string; empty = local SQLite
+    database_url: str = field(default_factory=lambda: os.getenv("DATABASE_URL", ""))
+    # Run graphs inside the request instead of a background thread (needed on serverless hosts)
+    sync_runs: bool = field(default_factory=lambda: os.getenv("TWIN_SYNC_RUNS", "") in ("1", "true", "yes")
+                            or bool(os.getenv("VERCEL")))
     data_dir: Path | None = None
     projects_dir: Path | None = None
 
     @property
     def db_path(self) -> Path:
-        base = self.data_dir or Path(os.getenv("TWIN_DATA_DIR", self.repo_root / "var"))
+        base = self.data_dir or Path(os.getenv("TWIN_DATA_DIR", "/tmp/twin-var" if os.getenv("VERCEL") else self.repo_root / "var"))
         return Path(base) / "orchestrator.db"
 
     @property
@@ -38,7 +43,8 @@ class Settings:
 
     @property
     def output_dir(self) -> Path:
-        return Path(self.projects_dir or os.getenv("TWIN_PROJECTS_DIR", self.repo_root / "projects"))
+        default = "/tmp/twin-projects" if os.getenv("VERCEL") else self.repo_root / "projects"
+        return Path(self.projects_dir or os.getenv("TWIN_PROJECTS_DIR", default))
 
     def resolved_provider(self) -> str:
         if self.llm_provider in ("anthropic", "offline"):

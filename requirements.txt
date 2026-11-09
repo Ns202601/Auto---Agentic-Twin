@@ -1,10 +1,10 @@
-pandas>=2.0
-numpy>=1.24
+# Runtime dependencies for the deployed orchestrator (Vercel installs these).
+# Local development: `make setup` installs everything from pyproject.toml.
 langgraph>=1.2
 langgraph-checkpoint-sqlite>=3.1
+langgraph-checkpoint-postgres>=3.2
+psycopg[binary]>=3.2
+psycopg-pool>=3.2
 anthropic>=2.6
 fastapi>=0.160
-uvicorn>=0.50
 pydantic>=2.10
-pytest>=7
-httpx>=0.28
