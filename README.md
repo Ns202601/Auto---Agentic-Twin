@@ -1,11 +1,16 @@
 # Auto — Agentic Twin
 
-Research and data tooling for commercial-vehicle AI/ML projects (Tata Motors, Mahindra, VECV, Ashok Leyland, Cummins).
+Research, data tooling and an idea orchestrator for commercial-vehicle AI/ML projects (Tata Motors, Mahindra, VECV, Ashok Leyland, Cummins).
+
+**Orchestrator:** a LangGraph pipeline that turns an idea into a classified, data-checked, human-reviewed blueprint and a starter project, with a TanStack UI. See [docs/orchestrator.md](docs/orchestrator.md). Quick start: `make setup && make serve`, then open http://127.0.0.1:8000.
 
 | Folder | What it holds |
 |---|---|
 | `research/` | Company reports, source directory, dataset inventory, data dictionary, PostgreSQL schema |
 | `src/cvtwin/` | Python package that checks and processes the research data |
+| `src/twinorch/` | LangGraph orchestrator: domain, LLM, graph, scaffold, store, service and API layers |
+| `ui/` | Orchestrator UI (React, TanStack Router, Query, Table) |
+| `docs/` | Orchestrator guide |
 | `tests/` | Unit tests (pytest) |
 | `artifacts/` | Generated outputs: check reports, clean tables, the Data Lab page |
 | `scripts/setup_env.sh` | Creates `.venv` and installs everything |
@@ -13,7 +18,7 @@ Research and data tooling for commercial-vehicle AI/ML projects (Tata Motors, Ma
 ## Quick start
 
 ```bash
-make setup     # create .venv (Python 3.10+), install pandas, numpy, pytest
+make setup     # create .venv (Python 3.10+), install everything, build the UI if npm exists
 make all       # compile -> test -> check -> process -> artifact
 ```
 
@@ -22,7 +27,9 @@ Individual steps:
 | Command | What it does | Output |
 |---|---|---|
 | `make compile` | Byte-compiles all Python code (catches syntax errors) | console |
-| `make test` | Runs 12 unit tests | console |
+| `make test` | Runs 32 tests (data checks and orchestrator) | console |
+| `make serve` | Orchestrator API + UI on :8000 | browser |
+| `make ui` / `make ui-dev` | Build the UI / hot-reload it on :5173 | `ui/dist/` |
 | `make check` | Validates the research CSVs, Markdown links and SQL schema | `artifacts/data_check_report.md`, `.json` |
 | `make process` | Builds clean, analysis-ready tables with pandas | `artifacts/processed/*.csv` |
 | `make artifact` | Builds the Data Lab page (report + in-browser Python) | `artifacts/data_lab.html` |

@@ -5,3 +5,6 @@ __pycache__/
 .pytest_cache/
 build/
 dist/
+var/
+ui/node_modules/
+ui/dist/
