@@ -1,0 +1,43 @@
+field,group,plain_english_meaning,unit_typical,availability_code,availability_meaning,public_evidence,best_open_proxy,notes
+engine_id,Engine,Unique engine identifier (anonymised),-,C,C - Public API / open dataset,None for Tata/Mahindra/VECV/AL/Cummins,C-MAPSS unit id (DS-03),Only anonymised ids are usable
+engine_rpm,Engine,Engine speed,rpm,D,D - Not publicly available,Specs give max rpm only (brochures),C-MAPSS fan-speed sensors (DS-03); no truck RPM series,Spec max rpm is an A-type value
+coolant_temperature,Engine,Engine coolant temperature,degC,E,E - Requires company permission or authorised access,Not in public sources,None,Needs OEM or fleet data agreement
+oil_pressure,Engine,Engine oil pressure,kPa / bar,E,E - Requires company permission or authorised access,Not in public sources,None,Needs OEM or fleet data agreement
+fuel_consumption,Engine / Fleet,Fuel used per distance or hour,L/100km or km/L,A,"A - Publicly available (as spec, claim or aggregate)","Company claims only: Mileage Sarathi 5.5-7%, Mahindra >10% (BS4 fleets), i-TRK +10%",None (aggregate claims only),Claims differ; treat as marketing
+engine_load,Engine,Share of max torque/power used,%,D,D - Not publicly available,Not in public sources,None,-
+exhaust_temperature,Engine / AT,Exhaust gas temperature,degC,D,D - Not publicly available,Not in public sources,None,Relevant to DPF regeneration
+boost_pressure,Engine,Turbocharger boost pressure,kPa,D,D - Not publicly available,Not in public sources,None,Relevant to turbo failure detection
+battery_voltage,Engine / EV,12 V or HV pack voltage,V,D,D - Not publicly available,Not in public sources; EV pack kWh and range are spec-level,"Battery datasets (DS-10, not verified)","EV spec only (450 kWh pack, Prima E.55S)"
+engine_hours,Vehicle / Engine,Accumulated engine running hours,h,D,D - Not publicly available,Not in public sources,None,-
+dpf_differential_pressure,After-treatment,Pressure drop across DPF (soot loading),kPa,D,D - Not publicly available,Not in public sources; DPF listed in Mahindra BS6 (architecture only),None,Key for DPF blockage prediction
+scr_temperature,After-treatment,SCR catalyst temperature,degC,D,D - Not publicly available,Not in public sources,None,-
+nox_sensor_reading,After-treatment,NOx concentration upstream/downstream of SCR,ppm,D,D - Not publicly available,Cummins claims SCR cuts NOx up to 99%; no readings,None,Needed for NOx anomaly detection
+def_consumption,After-treatment,AdBlue/DEF used,L/100km,D,D - Not publicly available,Mahindra markets 'low AdBlue'; Cummins AUS 32 tuning; no values,None,-
+egr_performance,After-treatment,EGR valve flow and efficiency,%,D,D - Not publicly available,Tata and Mahindra describe EGR in BS6 configs; no data,None,-
+regeneration_events,After-treatment,DPF regeneration start and end events,"count, time",D,D - Not publicly available,Not in public sources,None,-
+emission_levels,After-treatment / Compliance,Measured emissions vs norm,g/kWh,A,"A - Publicly available (as spec, claim or aggregate)",Standards are public (BS6); company certification claims,"CPCB and BS norms (regulatory docs, not dataset)",Use standards as reference data
+at_fault_codes,After-treatment,Fault codes for AT system,code,D,D - Not publicly available,Not in public sources,None,-
+vehicle_model,Vehicle,Model name and variant,text,A,"A - Publicly available (as spec, claim or aggregate)",Product pages and brochures (all five),Brochures (manual extraction),Build a spec table from brochures
+engine_type,Vehicle,Engine family and power,"kW, Nm",A,"A - Publicly available (as spec, claim or aggregate)",Specs: Blazo X 206 kW/1050 Nm; i-TRK 320 hp; A6 380 hp,Brochures (manual extraction),Check units (hp vs kW)
+gvw,Vehicle,Gross vehicle weight,t,A,"A - Publicly available (as spec, claim or aggregate)","Product specs, e.g. Prima 7-55 t range; Pro X 3.5 t",Brochures,-
+payload,Vehicle,Load the vehicle can carry,kg,A,"A - Publicly available (as spec, claim or aggregate)","Spec values (Pro X ~1,700 kg; sources differ)",Brochures,Verify conflicting values
+mileage,Vehicle,Odometer reading,km,D,D - Not publicly available,Not in public sources,None,-
+vehicle_speed,Vehicle,Instantaneous speed,km/h,D,D - Not publicly available,Not in public sources,None,Route-level speed only via OEM data
+distance_travelled,Vehicle,Distance per period,km,D,D - Not publicly available,Not in public sources,None,-
+idle_hours,Vehicle,Time with engine on and no movement,h,D,D - Not publicly available,"Telematics feature named (Mileage Sarathi, iMAXX); no values",None,-
+route_information,Vehicle / Fleet,Route taken and stops,text,D,D - Not publicly available,Not in public sources,None,Fleet/operator data needed
+service_date,Maintenance,Date of each service visit,date,D,D - Not publicly available,Not in public sources,None,-
+component_failure,Maintenance,Which component failed,label,C,C - Public API / open dataset,Failure categories exist only in open proxies,APS Failure (DS-01) - anonymised component class,Anonymised; not OEM truth
+fault_code,Maintenance,DTC or OEM fault code,code,D,D - Not publicly available,"Telematics read fault codes (Autocar, Tata, Eicher) but no public log",None,-
+repair_history,Maintenance,Repairs done on a vehicle,text,E,E - Requires company permission or authorised access,Not in public sources,None,Customer/dealer records
+replacement_component,Maintenance,Part replaced,text,D,D - Not publicly available,Not in public sources,None,-
+downtime,Maintenance / Fleet,Hours a vehicle is off the road,h,A,"A - Publicly available (as spec, claim or aggregate)",Claims: Cummins 45+ h per engine (PrevenTech); Mahindra 48-h uptime guarantee,None (aggregate claims only),"Claims, not measured data"
+maintenance_cost,Maintenance,Cost of repair/maintenance,INR or USD,A,"A - Publicly available (as spec, claim or aggregate)","Claim: Cummins USD 70,000 per engine avoided (PrevenTech)",None,Single claim
+failure_frequency,Maintenance,Failures per unit time,"per 1,000 h",D,D - Not publicly available,"Not in public sources; APS failure ratio ~1,000 positives in 60,000 train (DS-01)",APS Failure class balance,Use with care
+fleet_size,Fleet,Number of connected or owned vehicles,count,A,"A - Publicly available (as spec, claim or aggregate)",Connected counts: Tata >1M; Eicher 460k+; Ashok Leyland >170k (claims),VAHAN registrations (DS-05) for market-level counts,Counts are company claims
+fleet_fuel_efficiency,Fleet,Average fuel efficiency across fleet,km/L,A,"A - Publicly available (as spec, claim or aggregate)",Claims only (see fuel_consumption),None,-
+vehicle_utilisation,Fleet,Share of available time vehicle is working,%,D,D - Not publicly available,Not in public sources,None,-
+route_performance,Fleet,On-time and efficiency per route,various,D,D - Not publicly available,Not in public sources,None,-
+delivery_time,Fleet,Time to complete a delivery,h,D,D - Not publicly available,Not in public sources,None,-
+operating_cost,Fleet,Cost to run a vehicle per km,INR/km,D,D - Not publicly available,Not in public sources,None,-
+registrations_by_maker_state_fuel,Market (open),"Monthly registrations by maker, state, fuel, norm, category",count,C,C - Public API / open dataset,VAHAN open datasets (DS-05 to DS-09),Use directly,Verify licence per resource
